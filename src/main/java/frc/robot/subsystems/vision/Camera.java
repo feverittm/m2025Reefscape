@@ -10,8 +10,6 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-import com.revrobotics.spark.config.SmartMotionConfigAccessor;
-
 import org.photonvision.PhotonUtils;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -21,7 +19,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Drivebase;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -43,26 +40,15 @@ public class Camera
         this.results = null;
     }
 
-    public void update(SwerveDrivePoseEstimator poseEstimator)
+    public void update(SwerveDrivePoseEstimator poseEstimator, List<PhotonPipelineResult> results)
     {
-        this.results = this.camera.getAllUnreadResults();
+        this.results = results;
         SmartDashboard.putNumber("result size", this.results.size());
         if (!this.results.isEmpty())
         {
             for (PhotonPipelineResult result: results)
             {
-                
                 Optional<EstimatedRobotPose> estimatedRobotPose = this.photonPoseEstimator.update(result);
-                if (result.hasTargets())
-                {
-                    SmartDashboard.putNumber("has result", 1);
-                    SmartDashboard.putNumber("estimated x", estimatedRobotPose.orElseThrow().estimatedPose.toPose2d().getX());
-                    SmartDashboard.putNumber("estimated Y", estimatedRobotPose.orElseThrow().estimatedPose.toPose2d().getY());
-                    SmartDashboard.putNumber("estimated Theta", estimatedRobotPose.orElseThrow().estimatedPose.toPose2d().getRotation().getDegrees());
-                } else
-                {
-                    SmartDashboard.putNumber("has result", 0);
-                }
                 if (estimatedRobotPose.isPresent())
                 {
                     poseEstimator.addVisionMeasurement(estimatedRobotPose.orElseThrow().estimatedPose.toPose2d(), result.getTimestampSeconds());
@@ -71,17 +57,9 @@ public class Camera
         } 
     }
 
-    public int getTagId()
+    public List<PhotonPipelineResult> getResults()
     {
-        if (!this.results.isEmpty())
-        {
-            var target = results.get(0).getBestTarget();
-            if (target != null)
-            {
-                return target.getFiducialId();
-            }
-        }
-        return 0;
+        return this.camera.getAllUnreadResults();
     }
 
     public boolean hasTarget()
