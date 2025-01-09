@@ -21,6 +21,31 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final class ElevatorConstants{
+    public static final int leftSparkMaxID = 0;
+    public static final int rightSparkMaxID = 0;
+
+    public static final boolean leftSparkMaxInverted = false;
+    public static final boolean rightSparkMaxInverted = false;
+
+    public static final class SetpointRotations {
+    public static final double DOWN = 0;
+    public static final double L1 = 0;
+    public static final double L2 = 0;
+    public static final double L3 = 0;
+    public static final double L4 = 0;
+    }
+
+    public static final class PID {
+      public static final double kP = 0;
+      public static final double kI = 0;
+      public static final double kD = 0;
+      public static final double kF = 0;
+    }
+    
+    
+  }
+
   public static final class DriveConstants {
     public static final double deadband = 0.08;
     public static final int currentLimit = 40;
